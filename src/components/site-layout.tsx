@@ -72,7 +72,7 @@ export function SiteFooter() {
           <div>
             <div className="flex items-center gap-2 mb-3"><Star className="h-5 w-5 text-primary" /><span className="font-bold text-white">Astro Insight Tools</span></div>
             <p className="text-sm text-slate-300">Free astrology, zodiac, numerology, compatibility and personality tools for entertainment and self-reflection.</p>
-            <p className="mt-2 text-sm text-slate-400">Support: AstroInsightTools@proton.me</p>
+            <p className="mt-2 text-sm text-slate-300">Support: AstroInsightTools@proton.me</p>
           </div>
           <div>
             <h3 className="mb-3 font-semibold text-white">Explore</h3>
@@ -91,7 +91,7 @@ export function SiteFooter() {
             </div>
           </div>
         </div>
-        <Separator className="my-8 bg-slate-700/70" />
+        <Separator className="my-8 border-slate-700" />
         <p className="text-center text-xs text-slate-400">&copy; {new Date().getFullYear()} Astro Insight Tools. All rights reserved. For entertainment and self-reflection only.</p>
       </div>
     </footer>
