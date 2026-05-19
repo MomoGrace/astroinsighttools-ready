@@ -66,33 +66,33 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="bg-warm-900 text-warm-800 dark:bg-warm-50 dark:text-muted-foreground mt-auto">
+    <footer className="mt-auto bg-black text-slate-300">
       <div className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <div className="flex items-center gap-2 mb-3"><Star className="h-5 w-5 text-primary" /><span className="font-bold text-white dark:text-foreground">Astro Insight Tools</span></div>
-            <p className="text-sm opacity-80">Free astrology, zodiac, numerology, compatibility and personality tools for entertainment and self-reflection.</p>
-            <p className="text-sm opacity-60 mt-2">Support: AstroInsightTools@proton.me</p>
+            <div className="flex items-center gap-2 mb-3"><Star className="h-5 w-5 text-primary" /><span className="font-bold text-white">Astro Insight Tools</span></div>
+            <p className="text-sm text-slate-300">Free astrology, zodiac, numerology, compatibility and personality tools for entertainment and self-reflection.</p>
+            <p className="mt-2 text-sm text-slate-400">Support: AstroInsightTools@proton.me</p>
           </div>
           <div>
-            <h3 className="font-semibold mb-3 text-white dark:text-foreground">Explore</h3>
+            <h3 className="mb-3 font-semibold text-white">Explore</h3>
             <div className="flex flex-col gap-2 text-sm">
               {footerExploreLinks.map(([label, href]) => (
-                <Link key={href} href={href} className="opacity-80 hover:opacity-100 transition-opacity">{label}</Link>
+                <Link key={href} href={href} className="text-slate-300 transition-colors hover:text-white">{label}</Link>
               ))}
             </div>
           </div>
           <div>
-            <h3 className="font-semibold mb-3 text-white dark:text-foreground">Site</h3>
+            <h3 className="mb-3 font-semibold text-white">Site</h3>
             <div className="flex flex-col gap-2 text-sm">
               {footerSiteLinks.map(([label, href]) => (
-                <Link key={href} href={href} className="opacity-80 hover:opacity-100 transition-opacity">{label}</Link>
+                <Link key={href} href={href} className="text-slate-300 transition-colors hover:text-white">{label}</Link>
               ))}
             </div>
           </div>
         </div>
-        <Separator className="my-8 opacity-20" />
-        <p className="text-center text-xs opacity-50">&copy; {new Date().getFullYear()} Astro Insight Tools. All rights reserved. For entertainment and self-reflection only.</p>
+        <Separator className="my-8 bg-slate-700/70" />
+        <p className="text-center text-xs text-slate-400">&copy; {new Date().getFullYear()} Astro Insight Tools. All rights reserved. For entertainment and self-reflection only.</p>
       </div>
     </footer>
   );
