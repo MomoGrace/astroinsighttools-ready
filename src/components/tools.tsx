@@ -406,7 +406,7 @@ export function YesNoTarotTool({ navigate }: { navigate: (v: View) => void }) {
   return (
     <div className="fade-in max-w-4xl mx-auto px-4 py-8">
       <div className="mb-6"><Badge variant="secondary" className="mb-2">Tarot Tools</Badge><h1 className="text-3xl font-bold mt-2 mb-2">Yes or No Tarot Picker</h1><p className="text-muted-foreground">Pick a symbolic card and receive a yes/no prompt for self-reflection. Think of your question, then choose a card.</p></div>
-      {!picked ? (
+      {picked === null ? (
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-4 text-center">Think of your question, then choose a card</h2>
           <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto">
