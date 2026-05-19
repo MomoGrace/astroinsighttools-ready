@@ -98,3 +98,17 @@ Do not convert the site back to hash routes. Keep real Next.js routes because th
 Do not remove compliance pages from navigation/footer.
 Do not delete `public/sitemap.xml`, `public/robots.txt`, or `public/ads.txt`.
 If adding new tools/articles, update both `src/lib/slug-map.ts` and `public/sitemap.xml`.
+
+## Cloudflare Workers deployment notes
+
+This package is prepared for Cloudflare Workers using the OpenNext Cloudflare adapter.
+
+Recommended Cloudflare build settings:
+- Build command: `npm run build`
+- Deploy command: `npm run deploy`
+- Non-production branch deploy command: `npm run deploy`
+- Root path: `/`
+
+Important:
+- Do not upload `bun.lock` or `bun.lockb`.
+- Keep `wrangler.jsonc` and `open-next.config.ts` in the project root.
