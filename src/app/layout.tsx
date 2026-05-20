@@ -15,7 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Astro Insight Tools — Free Astrology & Numerology Calculators",
+  title: {
+    default: "Astro Insight Tools — Free Astrology & Numerology Calculators",
+    template: "%s | Astro Insight Tools",
+  },
   description:
     "Explore free astrology and numerology tools for self-reflection. Calculate your zodiac sign, moon phase, life path number, compatibility, name numerology, Chinese zodiac, and more.",
   keywords: [
