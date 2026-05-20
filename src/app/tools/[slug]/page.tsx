@@ -11,19 +11,21 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: 'Tool Not Found',
       description: 'The requested tool could not be found.',
       alternates: { canonical: `https://astroinsighttools.com/tools/${slug}` },
-      openGraph: {
+      twitter: { card: 'summary' },
+  openGraph: {
         url: `https://astroinsighttools.com/tools/${slug}`,
         title: 'Tool Not Found — Astro Insight Tools',
       },
     };
   }
 
-  const title = `${tool.title} — Astro Insight Tools`;
+  const title = tool.title;
   return {
     title,
     description: tool.description,
     alternates: { canonical: `https://astroinsighttools.com/tools/${slug}` },
-    openGraph: {
+    twitter: { card: 'summary' },
+  openGraph: {
       url: `https://astroinsighttools.com/tools/${slug}`,
       title,
       description: tool.description,
