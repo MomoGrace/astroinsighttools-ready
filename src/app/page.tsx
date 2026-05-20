@@ -49,8 +49,27 @@ export default function HomePage() {
   const router = useRouter();
   const navigate = (v: string) => { router.push(v); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
+  const webSiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Astro Insight Tools',
+    url: 'https://astroinsighttools.com',
+    description: 'Explore free astrology and numerology tools for self-reflection. Calculate your zodiac sign, moon phase, life path number, compatibility, name numerology, Chinese zodiac, and more.',
+  };
+
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Astro Insight Tools',
+    url: 'https://astroinsighttools.com',
+  };
+
+
   return (
-    <div className="fade-in">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }} />
+      <div className="fade-in">
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5" />
         <div className="relative max-w-6xl mx-auto px-4 py-16 md:py-24 text-center">
@@ -94,6 +113,7 @@ export default function HomePage() {
           </Accordion>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }
