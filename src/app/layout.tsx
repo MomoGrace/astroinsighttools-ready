@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://astroinsighttools.com"),
   title: {
     default: "Astro Insight Tools — Free Astrology & Numerology Calculators",
     template: "%s | Astro Insight Tools",
