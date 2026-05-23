@@ -6,7 +6,23 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Star, Calculator, BookOpen, Menu, Info, Mail, Home, Compass, Moon, Heart, Flame, Wind, Users } from 'lucide-react';
+import { Star, Calculator, BookOpen, Menu, Info, Mail, Home } from 'lucide-react';
+
+type CookieConsentPreferences = {
+  essential: true;
+  analytics: boolean;
+  advertising: boolean;
+};
+
+type CookieConsentState = {
+  version: 1;
+  selectedAt: string;
+  mode: 'accept_all' | 'reject_non_essential' | 'manage_preferences';
+  preferences: CookieConsentPreferences;
+};
+
+const COOKIE_KEY = 'astroinsighttools_cookie_consent_v1';
+const OPEN_PREFERENCES_EVENT = 'astroinsighttools:open-cookie-preferences';
 
 const headerLinks = [
   { label: 'Home', href: '/', icon: Home },
@@ -31,6 +47,35 @@ const footerSiteLinks = [
   ['Terms', '/terms'],
   ['Disclaimer', '/disclaimer'],
 ] as const;
+
+function sendConsentUpdate(preferences: CookieConsentPreferences) {
+  if (typeof window === 'undefined') return;
+
+  const gtag = (window as typeof window & {
+    gtag?: (...args: unknown[]) => void;
+  }).gtag;
+
+  if (!gtag) return;
+
+  gtag('consent', 'update', {
+    analytics_storage: preferences.analytics ? 'granted' : 'denied',
+    ad_storage: preferences.advertising ? 'granted' : 'denied',
+    ad_user_data: preferences.advertising ? 'granted' : 'denied',
+    ad_personalization: preferences.advertising ? 'granted' : 'denied',
+  });
+}
+
+function saveConsent(mode: CookieConsentState['mode'], preferences: CookieConsentPreferences) {
+  const consent: CookieConsentState = {
+    version: 1,
+    selectedAt: new Date().toISOString(),
+    mode,
+    preferences,
+  };
+
+  localStorage.setItem(COOKIE_KEY, JSON.stringify(consent));
+  sendConsentUpdate(preferences);
+}
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -65,6 +110,12 @@ export function SiteHeader() {
 }
 
 export function SiteFooter() {
+  const openCookiePreferences = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event(OPEN_PREFERENCES_EVENT));
+    }
+  };
+
   return (
     <footer className="mt-auto bg-black text-slate-300">
       <div className="max-w-6xl mx-auto px-4 py-12">
@@ -88,6 +139,9 @@ export function SiteFooter() {
               {footerSiteLinks.map(([label, href]) => (
                 <Link key={href} href={href} className="text-slate-300 transition-colors hover:text-white">{label}</Link>
               ))}
+              <button type="button" onClick={openCookiePreferences} className="text-left text-slate-300 transition-colors hover:text-white">
+                Cookie Preferences
+              </button>
             </div>
           </div>
         </div>
@@ -99,17 +153,141 @@ export function SiteFooter() {
 }
 
 export function CookieConsent() {
-  const [show, setShow] = useState(false);
+  const [showBanner, setShowBanner] = useState(false);
+  const [showPreferences, setShowPreferences] = useState(false);
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const [advertisingEnabled, setAdvertisingEnabled] = useState(false);
+
+  const loadStoredPreferences = () => {
+    const raw = localStorage.getItem(COOKIE_KEY);
+    if (!raw) return { analytics: false, advertising: false };
+
+    try {
+      const parsed = JSON.parse(raw) as CookieConsentState;
+      return {
+        analytics: Boolean(parsed.preferences?.analytics),
+        advertising: Boolean(parsed.preferences?.advertising),
+      };
+    } catch {
+      localStorage.removeItem(COOKIE_KEY);
+      return { analytics: false, advertising: false };
+    }
+  };
+
   useEffect(() => {
-    const c = localStorage.getItem('cookie-consent');
-    if (!c) { const id = requestAnimationFrame(() => setShow(true)); return () => cancelAnimationFrame(id); }
+    if (typeof window === 'undefined') return;
+
+    const gtag = (window as typeof window & { gtag?: (...args: unknown[]) => void }).gtag;
+    if (gtag) {
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        analytics_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+      });
+    }
+
+    const raw = localStorage.getItem(COOKIE_KEY);
+    if (raw) {
+      const storedPreferences = loadStoredPreferences();
+      sendConsentUpdate({
+        essential: true,
+        analytics: storedPreferences.analytics,
+        advertising: storedPreferences.advertising,
+      });
+    } else {
+      requestAnimationFrame(() => setShowBanner(true));
+    }
+
+    const handleOpenPreferences = () => {
+      const storedPreferences = loadStoredPreferences();
+      setAnalyticsEnabled(storedPreferences.analytics);
+      setAdvertisingEnabled(storedPreferences.advertising);
+      setShowBanner(true);
+      setShowPreferences(true);
+    };
+
+    window.addEventListener(OPEN_PREFERENCES_EVENT, handleOpenPreferences);
+
+    return () => window.removeEventListener(OPEN_PREFERENCES_EVENT, handleOpenPreferences);
   }, []);
-  if (!show) return null;
+
+  const acceptAll = () => {
+    setAnalyticsEnabled(true);
+    setAdvertisingEnabled(true);
+    saveConsent('accept_all', { essential: true, analytics: true, advertising: true });
+    setShowBanner(false);
+    setShowPreferences(false);
+  };
+
+  const rejectNonEssential = () => {
+    setAnalyticsEnabled(false);
+    setAdvertisingEnabled(false);
+    saveConsent('reject_non_essential', { essential: true, analytics: false, advertising: false });
+    setShowBanner(false);
+    setShowPreferences(false);
+  };
+
+  const savePreferences = () => {
+    saveConsent('manage_preferences', {
+      essential: true,
+      analytics: analyticsEnabled,
+      advertising: advertisingEnabled,
+    });
+    setShowBanner(false);
+    setShowPreferences(false);
+  };
+
+  if (!showBanner) return null;
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-card border-t shadow-lg p-4 cookie-slide-up">
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center gap-4">
-        <p className="text-sm flex-1">We use cookies to improve your experience and analyze site traffic. By continuing, you agree to our <Link href="/privacy" className="underline text-primary">Privacy Policy</Link>.</p>
-        <div className="flex gap-2"><Button size="sm" variant="outline" onClick={() => { localStorage.setItem('cookie-consent','declined'); setShow(false); }}>Decline</Button><Button size="sm" onClick={() => { localStorage.setItem('cookie-consent','accepted'); setShow(false); }}>Accept</Button></div>
+    <div className="fixed bottom-3 left-1/2 z-[70] w-[calc(100%-24px)] max-w-[860px] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl sm:bottom-4 sm:p-5">
+      <p className="text-sm text-slate-700">
+        We use cookies to improve your browsing experience, understand site usage, and support ads. You can accept all cookies, reject non-essential cookies, or manage your preferences.
+      </p>
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+        <Link href="/privacy" className="underline text-primary">Privacy Policy</Link>
+        <span className="text-slate-300" aria-hidden="true">|</span>
+        <Link href="/terms" className="underline text-primary">Terms</Link>
+      </div>
+
+      {showPreferences && (
+        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:p-4">
+          <h3 className="text-sm font-semibold text-slate-900">Cookie Preferences</h3>
+          <div className="mt-3 space-y-3">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-slate-900">Essential Cookies</p>
+                <p className="text-xs text-slate-600">Required for core site functionality.</p>
+              </div>
+              <span className="rounded-full bg-slate-200 px-2 py-1 text-xs font-medium text-slate-700">Always On</span>
+            </div>
+            <label className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-slate-900">Analytics Cookies</p>
+                <p className="text-xs text-slate-600">Help us understand traffic and improve the site.</p>
+              </div>
+              <input type="checkbox" checked={analyticsEnabled} onChange={(e) => setAnalyticsEnabled(e.target.checked)} className="mt-1 h-4 w-4" />
+            </label>
+            <label className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-slate-900">Advertising Cookies</p>
+                <p className="text-xs text-slate-600">Used to support and personalize advertising.</p>
+              </div>
+              <input type="checkbox" checked={advertisingEnabled} onChange={(e) => setAdvertisingEnabled(e.target.checked)} className="mt-1 h-4 w-4" />
+            </label>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Button size="sm" onClick={savePreferences}>Save Preferences</Button>
+            <Button size="sm" variant="outline" onClick={() => setShowPreferences(false)}>Back</Button>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Button size="sm" onClick={acceptAll}>Accept All</Button>
+        <Button size="sm" variant="outline" onClick={rejectNonEssential}>Reject Non-Essential</Button>
+        <Button size="sm" variant="secondary" onClick={() => setShowPreferences(true)}>Manage Preferences</Button>
       </div>
     </div>
   );
