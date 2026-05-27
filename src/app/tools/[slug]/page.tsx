@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import ToolSlugPageClient from './ToolSlugPageClient';
 import { toolSlugs } from '@/lib/slug-map';
+import { toolContentData } from '@/lib/tool-content';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -62,10 +63,26 @@ export default async function ToolSlugPage({ params }: { params: Promise<{ slug:
     ],
   };
 
+  // FAQ JSON-LD
+  const faqContent = toolContentData[slug];
+  const faqJsonLd = faqContent ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqContent.faqs.map(f => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.a,
+      },
+    })),
+  } : null;
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webApplicationJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      {faqJsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />}
       <ToolSlugPageClient />
     </>
   );

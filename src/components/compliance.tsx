@@ -51,7 +51,7 @@ export function AboutPage() {
         </ul>
 
         <h2>Our Team</h2>
-        <p>Astro Insight Tools is built by a small team of developers and astrology enthusiasts who believe in creating responsible, beautiful digital tools for self-exploration. We are passionate about design, accessibility, and providing a calm, ad-supported platform that serves its users well.</p>
+        <p>Astro Insight Tools is an independent digital tools project created by a small team with interests in web development, symbolic systems, journaling and self-reflection. Our goal is to create responsible, calm and easy-to-use tools for people who enjoy astrology and numerology as entertainment and personal exploration.</p>
 
         <Separator className="my-8" />
 

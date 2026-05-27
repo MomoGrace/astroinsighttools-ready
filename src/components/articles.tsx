@@ -7,7 +7,6 @@ import { aspectInterpretations, houseInterpretations } from '@/lib/interpretatio
 import { DisclaimerNote, RelatedTools } from '@/components/tools';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import {
   Star, Calculator, Compass, Sparkles, Clock, BookOpen,
   Moon, Mountain, Sun, Users, Globe, ArrowRight, Hash, Heart
@@ -52,14 +51,17 @@ function FAQSection({ faqs }: { faqs: { q: string; a: string }[] }) {
   return (
     <section className="mt-10">
       <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
-      <Accordion type="single" collapsible className="w-full">
+      <div className="w-full">
         {faqs.map((faq, i) => (
-          <AccordionItem key={i} value={`faq-${i}`}>
-            <AccordionTrigger>{faq.q}</AccordionTrigger>
-            <AccordionContent>{faq.a}</AccordionContent>
-          </AccordionItem>
+          <details key={i} className="group border-b">
+            <summary className="flex items-center justify-between py-4 text-sm font-medium cursor-pointer outline-none hover:underline [&::-webkit-details-marker]:hidden list-none">
+              {faq.q}
+              <svg className="text-muted-foreground h-4 w-4 shrink-0 transition-transform duration-200 group-open:rotate-180" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </summary>
+            <div className="pb-4 text-sm leading-7 text-muted-foreground">{faq.a}</div>
+          </details>
         ))}
-      </Accordion>
+      </div>
     </section>
   );
 }

@@ -20,6 +20,7 @@ import {
   Palette, Rainbow, User, Hash, Sun, Clock, DollarSign, Briefcase,
   Eye, BookCheck, HelpCircle, TrendingUp, CheckCircle2, Info, Globe, Zap, Shield, Target, ScrollText
 } from 'lucide-react';
+import { ToolEducationSection } from '@/components/tool-education';
 
 type View = string;
 
@@ -89,12 +90,13 @@ export function ToolCard({ title, description, icon, view, navigate, tag }: { ti
   );
 }
 
-export function InterpretationToolPage({ title, subtitle, tag, children, navigate, articleContent }: { title: string; subtitle: string; tag: string; children: React.ReactNode; navigate: (v: View) => void; articleContent?: React.ReactNode }) {
+export function InterpretationToolPage({ title, subtitle, tag, children, navigate, articleContent, slug }: { title: string; subtitle: string; tag: string; children: React.ReactNode; navigate: (v: View) => void; articleContent?: React.ReactNode; slug?: string }) {
   return (
     <div className="fade-in max-w-5xl mx-auto px-4 py-8">
       <div className="mb-6"><Badge variant="secondary">{tag}</Badge><h1 className="text-3xl font-bold mt-2 mb-2">{title}</h1><p className="text-muted-foreground">{subtitle}</p></div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">{children}</div>
       {articleContent}
+      {slug && <ToolEducationSection slug={slug} />}
       <DisclaimerNote />
       <RelatedTools navigate={navigate} />
     </div>
@@ -183,7 +185,7 @@ export function BirthTimeUnknownTool({ navigate }: { navigate: (v: View) => void
 // ============================================================
 // 3. LUCKY COLOR CALCULATOR
 // ============================================================
-export function LuckyColorTool({ navigate }: { navigate: (v: View) => void }) {
+export function LuckyColorTool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [sign, setSign] = useState('Aries');
   const [result, setResult] = useState<React.ReactNode>(null);
   const generate = () => {
@@ -208,7 +210,7 @@ export function LuckyColorTool({ navigate }: { navigate: (v: View) => void }) {
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
   return (
-    <InterpretationToolPage title="Lucky Color Calculator" subtitle="Get a symbolic color palette for focus, calm and confidence based on your zodiac sign." tag="Lucky Tools" navigate={navigate}>
+    <InterpretationToolPage title="Lucky Color Calculator" subtitle="Get a symbolic color palette for focus, calm and confidence based on your zodiac sign." tag="Lucky Tools" navigate={navigate} slug={slug}>
       <Card><CardContent className="pt-6 space-y-3"><h2 className="text-lg font-semibold">Your zodiac sign</h2><SignSelect label="Zodiac Sign" value={sign} onChange={setSign} /><Button onClick={generate} className="w-full">Generate Lucky Colors</Button></CardContent></Card>
       <ResultPanel result={result} />
     </InterpretationToolPage>
@@ -218,7 +220,7 @@ export function LuckyColorTool({ navigate }: { navigate: (v: View) => void }) {
 // ============================================================
 // 4. BIRTHDAY PERSONALITY CALCULATOR
 // ============================================================
-export function BirthdayPersonalityTool({ navigate }: { navigate: (v: View) => void }) {
+export function BirthdayPersonalityTool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [month, setMonth] = useState(1);
   const [day, setDay] = useState(1);
   const [result, setResult] = useState<React.ReactNode>(null);
@@ -281,7 +283,7 @@ export function BirthdayPersonalityTool({ navigate }: { navigate: (v: View) => v
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
   return (
-    <InterpretationToolPage title="Birthday Personality Calculator" subtitle="Turn a birthday into a gentle personality reflection based on zodiac sign and birthday number." tag="Personality Tools" navigate={navigate}>
+    <InterpretationToolPage title="Birthday Personality Calculator" subtitle="Turn a birthday into a gentle personality reflection based on zodiac sign and birthday number." tag="Personality Tools" navigate={navigate} slug={slug}>
       <Card><CardContent className="pt-6 space-y-3"><h2 className="text-lg font-semibold">Your birthday</h2><div className="grid grid-cols-2 gap-4"><div><Label>Month</Label><select value={month} onChange={e=>setMonth(Number(e.target.value))} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">{months.map((m,i)=><option key={i} value={i+1}>{m}</option>)}</select></div><div><Label>Day</Label><select value={day} onChange={e=>setDay(Number(e.target.value))} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">{Array.from({length:31},(_,i)=><option key={i} value={i+1}>{i+1}</option>)}</select></div></div><Button onClick={generate} className="w-full">Generate Birthday Reflection</Button></CardContent></Card>
       <ResultPanel result={result} />
     </InterpretationToolPage>
@@ -291,7 +293,7 @@ export function BirthdayPersonalityTool({ navigate }: { navigate: (v: View) => v
 // ============================================================
 // 5. FIVE ELEMENTS CALCULATOR
 // ============================================================
-export function FiveElementsTool({ navigate }: { navigate: (v: View) => void }) {
+export function FiveElementsTool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [year, setYear] = useState(1990);
   const [result, setResult] = useState<React.ReactNode>(null);
   const generate = () => {
@@ -317,7 +319,7 @@ export function FiveElementsTool({ navigate }: { navigate: (v: View) => void }) 
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
   return (
-    <InterpretationToolPage title="Five Elements Calculator" subtitle="Explore a five-element personality theme from your Chinese zodiac birth year." tag="Chinese Zodiac Tools" navigate={navigate}>
+    <InterpretationToolPage title="Five Elements Calculator" subtitle="Explore a five-element personality theme from your Chinese zodiac birth year." tag="Chinese Zodiac Tools" navigate={navigate} slug={slug}>
       <Card><CardContent className="pt-6 space-y-3"><h2 className="text-lg font-semibold">Your birth year</h2><div><Label>Birth Year</Label><Input type="number" value={year} onChange={e=>setYear(Number(e.target.value))} className="mt-1" /></div><Button onClick={generate} className="w-full">Calculate Five Elements</Button></CardContent></Card>
       <ResultPanel result={result} />
     </InterpretationToolPage>
@@ -327,7 +329,7 @@ export function FiveElementsTool({ navigate }: { navigate: (v: View) => void }) 
 // ============================================================
 // 6. DAILY HOROSCOPE GENERATOR
 // ============================================================
-export function DailyHoroscopeTool({ navigate }: { navigate: (v: View) => void }) {
+export function DailyHoroscopeTool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [sign, setSign] = useState('Aries');
   const result = useMemo(() => {
     const today = new Date();
@@ -348,7 +350,7 @@ export function DailyHoroscopeTool({ navigate }: { navigate: (v: View) => void }
   }, [sign]);
 
   return (
-    <InterpretationToolPage title="Daily Horoscope Generator" subtitle="Generate a light daily reflection prompt based on your zodiac sign." tag="Astrology Tools" navigate={navigate}>
+    <InterpretationToolPage title="Daily Horoscope Generator" subtitle="Generate a light daily reflection prompt based on your zodiac sign." tag="Astrology Tools" navigate={navigate} slug={slug}>
       <Card><CardContent className="pt-6 space-y-3"><h2 className="text-lg font-semibold">Your zodiac sign</h2><SignSelect label="Zodiac Sign" value={sign} onChange={setSign} /><p className="text-xs text-muted-foreground">Your daily reflection updates automatically each day.</p></CardContent></Card>
       <ResultPanel result={result} />
     </InterpretationToolPage>
@@ -358,7 +360,7 @@ export function DailyHoroscopeTool({ navigate }: { navigate: (v: View) => void }
 // ============================================================
 // 7. 2026 HOROSCOPE TOOL
 // ============================================================
-export function Horoscope2026Tool({ navigate }: { navigate: (v: View) => void }) {
+export function Horoscope2026Tool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [sign, setSign] = useState('Aries');
   const [result, setResult] = useState<React.ReactNode>(null);
   const generate = () => {
@@ -380,7 +382,7 @@ export function Horoscope2026Tool({ navigate }: { navigate: (v: View) => void })
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
   return (
-    <InterpretationToolPage title="2026 Horoscope Tool" subtitle="Explore a yearly reflection theme by zodiac sign for 2026." tag="Astrology Tools" navigate={navigate}>
+    <InterpretationToolPage title="2026 Horoscope Tool" subtitle="Explore a yearly reflection theme by zodiac sign for 2026." tag="Astrology Tools" navigate={navigate} slug={slug}>
       <Card><CardContent className="pt-6 space-y-3"><h2 className="text-lg font-semibold">Your zodiac sign</h2><SignSelect label="Zodiac Sign" value={sign} onChange={setSign} /><Button onClick={generate} className="w-full">Generate 2026 Horoscope</Button></CardContent></Card>
       <ResultPanel result={result} />
     </InterpretationToolPage>
@@ -453,7 +455,7 @@ export function YesNoTarotTool({ navigate }: { navigate: (v: View) => void }) {
 // ============================================================
 // 9. ANGEL NUMBER MEANING TOOL
 // ============================================================
-export function AngelNumberTool({ navigate }: { navigate: (v: View) => void }) {
+export function AngelNumberTool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [number, setNumber] = useState('');
   const [result, setResult] = useState<React.ReactNode>(null);
 
@@ -487,7 +489,7 @@ export function AngelNumberTool({ navigate }: { navigate: (v: View) => void }) {
   };
 
   return (
-    <InterpretationToolPage title="Angel Number Meaning Tool" subtitle="Look up a symbolic meaning for repeated numbers you keep seeing." tag="Numerology Tools" navigate={navigate}>
+    <InterpretationToolPage title="Angel Number Meaning Tool" subtitle="Look up a symbolic meaning for repeated numbers you keep seeing." tag="Numerology Tools" navigate={navigate} slug={slug}>
       <Card><CardContent className="pt-6 space-y-3"><h2 className="text-lg font-semibold">Enter a number</h2><div><Label>Angel Number</Label><Input type="number" value={number} onChange={e=>setNumber(e.target.value)} placeholder="e.g. 111, 444, 777" className="mt-1" /></div><Button onClick={lookup} className="w-full" disabled={!number || parseInt(number) < 1}>Look Up Meaning</Button><p className="text-xs text-muted-foreground">Try common sequences like 111, 222, 333, 444, 555, 777, or 1111.</p></CardContent></Card>
       <ResultPanel result={result} />
     </InterpretationToolPage>
@@ -497,7 +499,7 @@ export function AngelNumberTool({ navigate }: { navigate: (v: View) => void }) {
 // ============================================================
 // 10. LUCKY NUMBER CALCULATOR
 // ============================================================
-export function LuckyNumberTool({ navigate }: { navigate: (v: View) => void }) {
+export function LuckyNumberTool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [sign, setSign] = useState('Aries');
   const [result, setResult] = useState<React.ReactNode>(null);
 
@@ -539,7 +541,7 @@ export function LuckyNumberTool({ navigate }: { navigate: (v: View) => void }) {
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
   return (
-    <InterpretationToolPage title="Lucky Number Calculator" subtitle="Find a playful lucky number and reflection theme based on your zodiac sign." tag="Lucky Tools" navigate={navigate}>
+    <InterpretationToolPage title="Lucky Number Calculator" subtitle="Find a playful lucky number and reflection theme based on your zodiac sign." tag="Lucky Tools" navigate={navigate} slug={slug}>
       <Card><CardContent className="pt-6 space-y-3"><h2 className="text-lg font-semibold">Your zodiac sign</h2><SignSelect label="Zodiac Sign" value={sign} onChange={setSign} /><Button onClick={generate} className="w-full">Generate Lucky Numbers</Button></CardContent></Card>
       <ResultPanel result={result} />
     </InterpretationToolPage>
@@ -549,7 +551,7 @@ export function LuckyNumberTool({ navigate }: { navigate: (v: View) => void }) {
 // ============================================================
 // 11. RISING SIGN ESTIMATOR
 // ============================================================
-export function RisingSignEstimatorTool({ navigate }: { navigate: (v: View) => void }) {
+export function RisingSignEstimatorTool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [hour, setHour] = useState(12);
   const [result, setResult] = useState<React.ReactNode>(null);
   const generate = () => {
@@ -579,7 +581,7 @@ export function RisingSignEstimatorTool({ navigate }: { navigate: (v: View) => v
 // ============================================================
 // 12. CAREER PERSONALITY CALCULATOR
 // ============================================================
-export function CareerPersonalityTool({ navigate }: { navigate: (v: View) => void }) {
+export function CareerPersonalityTool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [sign, setSign] = useState('Aries');
   const [result, setResult] = useState<React.ReactNode>(null);
   const generate = () => {
@@ -601,7 +603,7 @@ export function CareerPersonalityTool({ navigate }: { navigate: (v: View) => voi
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
   return (
-    <InterpretationToolPage title="Career Personality Calculator" subtitle="Get career style prompts from personality inputs based on your zodiac sign." tag="Personality Tools" navigate={navigate}>
+    <InterpretationToolPage title="Career Personality Calculator" subtitle="Get career style prompts from personality inputs based on your zodiac sign." tag="Personality Tools" navigate={navigate} slug={slug}>
       <Card><CardContent className="pt-6 space-y-3"><h2 className="text-lg font-semibold">Your zodiac sign</h2><SignSelect label="Zodiac Sign" value={sign} onChange={setSign} /><Button onClick={generate} className="w-full">Generate Career Profile</Button></CardContent></Card>
       <ResultPanel result={result} />
     </InterpretationToolPage>
@@ -611,7 +613,7 @@ export function CareerPersonalityTool({ navigate }: { navigate: (v: View) => voi
 // ============================================================
 // 13. PERSONAL YEAR CALCULATOR
 // ============================================================
-export function PersonalYearTool({ navigate }: { navigate: (v: View) => void }) {
+export function PersonalYearTool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [month, setMonth] = useState(1);
   const [day, setDay] = useState(1);
   const [year, setYear] = useState(2000);
@@ -637,7 +639,7 @@ export function PersonalYearTool({ navigate }: { navigate: (v: View) => void }) 
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
   return (
-    <InterpretationToolPage title="Personal Year Calculator" subtitle="Calculate a numerology personal year theme from your birth date." tag="Numerology Tools" navigate={navigate}>
+    <InterpretationToolPage title="Personal Year Calculator" subtitle="Calculate a numerology personal year theme from your birth date." tag="Numerology Tools" navigate={navigate} slug={slug}>
       <Card><CardContent className="pt-6 space-y-3"><h2 className="text-lg font-semibold">Your birth date</h2><div className="grid grid-cols-3 gap-4"><div><Label>Month</Label><select value={month} onChange={e=>setMonth(Number(e.target.value))} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">{months.map((m,i)=><option key={i} value={i+1}>{m}</option>)}</select></div><div><Label>Day</Label><Input type="number" value={day} onChange={e=>setDay(Number(e.target.value))} className="mt-1" /></div><div><Label>Year</Label><Input type="number" value={year} onChange={e=>setYear(Number(e.target.value))} className="mt-1" /></div></div><Button onClick={generate} className="w-full">Calculate Personal Year</Button></CardContent></Card>
       <ResultPanel result={result} />
     </InterpretationToolPage>
@@ -647,7 +649,7 @@ export function PersonalYearTool({ navigate }: { navigate: (v: View) => void }) 
 // ============================================================
 // 14. ZODIAC MONEY STYLE CALCULATOR
 // ============================================================
-export function ZodiacMoneyStyleTool({ navigate }: { navigate: (v: View) => void }) {
+export function ZodiacMoneyStyleTool({ navigate, slug }: { navigate: (v: View) => void; slug?: string }) {
   const [sign, setSign] = useState('Aries');
   const [result, setResult] = useState<React.ReactNode>(null);
   const generate = () => {
@@ -672,7 +674,7 @@ export function ZodiacMoneyStyleTool({ navigate }: { navigate: (v: View) => void
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
   return (
-    <InterpretationToolPage title="Zodiac Money Style Calculator" subtitle="Reflect on spending, saving and comfort patterns by zodiac sign." tag="Personality Tools" navigate={navigate}>
+    <InterpretationToolPage title="Zodiac Money Style Calculator" subtitle="Reflect on spending, saving and comfort patterns by zodiac sign." tag="Personality Tools" navigate={navigate} slug={slug}>
       <Card><CardContent className="pt-6 space-y-3"><h2 className="text-lg font-semibold">Your zodiac sign</h2><SignSelect label="Zodiac Sign" value={sign} onChange={setSign} /><Button onClick={generate} className="w-full">Generate Money Style</Button></CardContent></Card>
       <ResultPanel result={result} />
     </InterpretationToolPage>
